@@ -1,0 +1,16 @@
+# Local environment
+.venv/
+.idea/
+__pycache__/
+*.py[cod]
+
+# Large datasets and generated training artifacts
+ML_Data/
+models/
+*.npy
+*.npz
+*.h5
+*.keras
+*.pkl
+*.joblib
+*.zip
