@@ -8,6 +8,7 @@ from scipy.io import mmread
 import pickle
 from PyQt5.QtCore import QStringListModel
 
+from job04_recommendation import recommendation
 
 form_window = uic.loadUiType('./movie_recommendation.ui')[0]
 
@@ -27,7 +28,22 @@ class Exam(QWidget, form_window):
         for title in self.titles:
             self.cb_title.addItem(title)
 
+        model = QStringListModel()
+        model.setStringList(self.titles)
+        completer = QCompleter()
+        completer.setModel(model)
+        self.le_keyword.setCompleter(completer)
+
         self.cb_title.currentIndexChanged.connect(self.combobox_slot)
+        self.btn_recommend.clicked.connect(self.btn_keywords_clicked)
+
+    def btn_keywords_clicked(self):
+        keyword = self.le_keyword.text()
+        if keyword in self.titles:
+            recommendations = self.recommendation_by_title(keyword)
+        else:
+            recommendations = self.recommendation_by_keyword(keyword)
+        self.lb_recommendation.setText(str(recommendations))
 
     def getRecommendation(self,cosine_sim):
         simScore = list(enumerate(cosine_sim[-1]))
@@ -50,6 +66,25 @@ class Exam(QWidget, form_window):
         recommendations = self. getRecommendation(cosine_sim)
         recommendations = '\n'.join(recommendations[1:])
         return recommendations
+    def recommendation_by_keyword(self,keyword):
+        try:
+            sim_word = self.embedding_model.wv.most_similar(keyword, topn=10)
+        except:
+            return '제가 모르는 단어입니다.'
+        sentence = [keyword] * 11
+        count = 10
+        for word, _ in sim_word:
+            sentence = sentence + [word] * count
+            count = count - 1
+        print(sentence)
+        sentence = ' '.join(sentence)
+        print(sentence)
+
+        sentence_vec = self.Tfidf.transform([sentence])
+        cosine_sim = linear_kernel(sentence_vec, self.Tfidf_matrix)
+        recommendations = self.getRecommendation(cosine_sim)
+        return recommendations
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

@@ -156,22 +156,5 @@
   </layout>
  </widget>
  <resources/>
- <connections>
-  <connection>
-   <sender>cb_title</sender>
-   <signal>currentTextChanged(QString)</signal>
-   <receiver>btn_recommend</receiver>
-   <slot>click()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>85</x>
-     <y>113</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>371</x>
-     <y>158</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>
